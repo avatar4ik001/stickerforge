@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StickerForge — Custom Stickers & Packs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <a href="#" class="logo" onclick="showPage('home')">
+        🔥 <span>Sticker</span>Forge
+      </a>
+
+      <nav>
+        <a href="#" class="active" data-page="home" onclick="showPage('home')" data-i18n="nav_home">Home</a>
+        <a href="#" data-page="shop" onclick="showPage('shop')" data-i18n="nav_shop">Shop</a>
+        <a href="#" data-page="custom" onclick="showPage('custom')" data-i18n="nav_custom">Custom</a>
+        <a href="#" data-page="about" onclick="showPage('about')" data-i18n="nav_about">About</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-switch">
+          <button id="lang-en" class="active" onclick="setLang('en')">EN</button>
+          <button id="lang-ru" onclick="setLang('ru')">RU</button>
+        </div>
+
+        <div id="auth-area">
+          <button class="btn btn-outline" onclick="openAuth('login')" data-i18n="login">Log in</button>
+        </div>
+
+        <button class="cart-btn" onclick="openCart()">
+          🛒
+          <span class="cart-count" id="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HOME PAGE -->
+  <div id="page-home">
+    <section class="hero">
+      <div class="hero-text">
+        <h1 data-i18n="hero_title">Premium stickers<br>that <span>stick</span></h1>
+        <p data-i18n="hero_sub">High-quality vinyl stickers. Free shipping, fast turnaround, waterproof & durable. Pick any emoji and customize size, shape & quantity.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="showPage('shop')" data-i18n="shop_now">Shop now</button>
+          <button class="btn btn-outline" onclick="showPage('about')" data-i18n="learn_more">Learn more</button>
+        </div>
+      </div>
+      <div class="hero-visual" id="hero-emojis"></div>
+    </section>
+
+    <section>
+      <h2 class="section-title" data-i18n="why_us">Why StickerForge?</h2>
+      <p class="section-sub" data-i18n="why_sub">Everything you need for epic stickers</p>
+      <div class="features">
+        <div class="feature-card">
+          <div class="icon">🚀</div>
+          <h4 data-i18n="feat1_title">Fast shipping</h4>
+          <p data-i18n="feat1_desc">Free worldwide shipping. Most orders ship in 2–4 days.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">💧</div>
+          <h4 data-i18n="feat2_title">Waterproof vinyl</h4>
+          <p data-i18n="feat2_desc">Premium materials that survive rain, sun and washing.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">✂️</div>
+          <h4 data-i18n="feat3_title">Die-cut precision</h4>
+          <p data-i18n="feat3_desc">Any shape. Clean edges. Professional quality every time.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🎨</div>
+          <h4 data-i18n="feat4_title">Custom options</h4>
+          <p data-i18n="feat4_desc">Choose size, shape and quantity for every sticker.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title" data-i18n="featured">Popular stickers</h2>
+      <p class="section-sub" data-i18n="featured_sub">Click any sticker to customize and order</p>
+      <div id="featured-stickers"></div>
+      <div style="text-align:center;margin-top:28px">
+        <button class="btn btn-primary" onclick="showPage('shop')" data-i18n="view_all">View all categories</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- SHOP PAGE -->
+  <div id="page-shop" style="display:none">
+    <section>
+      <h2 class="section-title" data-i18n="all_stickers">Emoji Stickers</h2>
+      <p class="section-sub" data-i18n="all_stickers_sub">Choose a sticker, pick size, shape & quantity — then add to cart.</p>
+      <div id="shop-stickers"></div>
+    </section>
+  </div>
+
+
+
+  <!-- CUSTOM PAGE (StickerApp-style editor) -->
+  <div id="page-custom" style="display:none">
+    <section class="custom-section">
+      <div class="custom-header-bar">
+        <div>
+          <h2 class="section-title" style="margin-bottom:4px" data-i18n="custom_page_title">Custom stickers</h2>
+          <p class="section-sub" style="margin-bottom:0" data-i18n="custom_page_sub">Upload artwork · choose material & size · instant proof</p>
+        </div>
+        <div class="custom-header-price">
+          <span data-i18n="total">Total</span>
+          <strong id="custom-header-total">$0.00</strong>
+        </div>
+      </div>
+
+      <div class="sa-editor">
+        <!-- LEFT: proof canvas -->
+        <div class="sa-canvas-wrap">
+          <div class="sa-canvas-toolbar">
+            <button type="button" class="tool-btn" onclick="editorRotate(-90)" title="Rotate left">↺</button>
+            <button type="button" class="tool-btn" onclick="editorRotate(90)" title="Rotate right">↻</button>
+            <button type="button" class="tool-btn" onclick="editorFlipH()" title="Flip horizontal">⇔</button>
+            <button type="button" class="tool-btn" onclick="editorFlipV()" title="Flip vertical">⇕</button>
+            <span class="tool-sep"></span>
+            <button type="button" class="tool-btn" onclick="editorZoom(-0.1)">−</button>
+            <span class="tool-zoom" id="editor-zoom-label">100%</span>
+            <button type="button" class="tool-btn" onclick="editorZoom(0.1)">+</button>
+            <span class="tool-sep"></span>
+            <button type="button" class="tool-btn" onclick="editorReset()" data-i18n="editor_reset">Reset</button>
+            <span class="tool-sep"></span>
+            <label class="tool-check"><input type="checkbox" id="show-guides" checked onchange="toggleGuides()" /> <span data-i18n="show_guides">Guides</span></label>
+          </div>
+
+          <div class="sa-stage cut-die" id="editor-stage">
+            <div class="sa-scene" id="sa-scene">
+              <!-- Kiss-cut backing sheet (hidden for die-cut) -->
+              <div class="sa-sheet" id="sa-sheet">
+                <div class="sa-sheet-texture"></div>
+                <div class="sa-sheet-edge"></div>
+              </div>
+
+              <div class="sa-proof" id="sa-proof">
+                <div class="sa-proof-shadow" id="sa-proof-shadow"></div>
+
+                <div class="sa-sticker mat-vinyl finish-glossy" id="sa-artwork">
+                  <div class="sa-sticker-inner">
+                    <img id="editor-image" alt="" draggable="false" />
+                    <div class="mat-layer" id="mat-layer" aria-hidden="true"></div>
+                    <div class="finish-layer" id="finish-layer" aria-hidden="true"></div>
+                    <div class="sa-glare" id="sa-glare" aria-hidden="true"></div>
+                  </div>
+                  <!-- kiss-cut peel hint line -->
+                  <div class="sa-kiss-cutline" id="sa-kiss-cutline" aria-hidden="true"></div>
+                  <div class="sa-empty" id="editor-empty">
+                    <div class="upload-icon">📁</div>
+                    <p data-i18n="upload_drop">Drop your design here</p>
+                    <p class="upload-hint" data-i18n="upload_hint">PNG, JPG, SVG, PDF · 300 DPI · max 25 MB</p>
+                    <button type="button" class="btn btn-primary" onclick="document.getElementById('design-file').click()" data-i18n="upload_browse">Upload design</button>
+                  </div>
+                </div>
+
+                <div class="sa-guide sa-guide-bleed" id="guide-bleed"></div>
+                <div class="sa-guide sa-guide-cut" id="guide-cut"></div>
+                <div class="sa-guide sa-guide-safe" id="guide-safe"></div>
+              </div>
+            </div>
+
+            <div class="sa-stage-footer">
+              <div class="sa-material-badge" id="material-badge">Vinyl · Glossy · Die-cut</div>
+              <div class="sa-guide-legend" id="guide-legend">
+                <span><i class="lg-bleed"></i> <span data-i18n="guide_bleed">Bleed</span></span>
+                <span><i class="lg-cut"></i> <span data-i18n="guide_cut">Cutline</span></span>
+                <span><i class="lg-safe"></i> <span data-i18n="guide_safe">Safe zone</span></span>
+              </div>
+            </div>
+          </div>
+
+          <input type="file" id="design-file" accept=".png,.jpg,.jpeg,.svg,.pdf,.ai,.eps,image/*" hidden onchange="onFileSelected(event)" />
+          <div class="sa-file-row">
+            <span id="editor-filename" class="editor-filename"></span>
+            <button type="button" class="btn btn-ghost" id="custom-clear-btn" onclick="clearUpload()" data-i18n="upload_change" hidden>Change file</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: options -->
+        <aside class="sa-sidebar">
+          <div class="sa-step">
+            <div class="sa-step-num">1</div>
+            <div class="sa-step-body">
+              <label class="option-label" data-i18n="material">Material</label>
+              <div class="option-pills" id="custom-material-options"></div>
+            </div>
+          </div>
+
+          <div class="sa-step">
+            <div class="sa-step-num">2</div>
+            <div class="sa-step-body">
+              <label class="option-label" data-i18n="shape">Shape</label>
+              <div class="option-pills" id="custom-shape-options"></div>
+            </div>
+          </div>
+
+          <div class="sa-step">
+            <div class="sa-step-num">3</div>
+            <div class="sa-step-body">
+              <label class="option-label" data-i18n="cut_type">Cut</label>
+              <div class="option-pills" id="custom-cut-options"></div>
+            </div>
+          </div>
+
+          <div class="sa-step">
+            <div class="sa-step-num">4</div>
+            <div class="sa-step-body">
+              <label class="option-label" data-i18n="size">Size</label>
+              <div class="option-pills" id="custom-size-options"></div>
+            </div>
+          </div>
+
+          <div class="sa-step">
+            <div class="sa-step-num">5</div>
+            <div class="sa-step-body">
+              <label class="option-label" data-i18n="finish">Finish</label>
+              <div class="option-pills" id="custom-finish-options"></div>
+            </div>
+          </div>
+
+          <div class="sa-step">
+            <div class="sa-step-num">6</div>
+            <div class="sa-step-body">
+              <label class="option-label" data-i18n="quantity">Quantity</label>
+              <div class="option-pills" id="custom-qty-options"></div>
+              <div class="custom-qty">
+                <label data-i18n="or_custom">Or enter custom:</label>
+                <input type="number" id="custom-qty-input" min="10" max="5000" value="50" onchange="onCustomConfigQty()" oninput="onCustomConfigQty()" />
+              </div>
+            </div>
+          </div>
+
+          <div class="sa-step">
+            <div class="sa-step-num">7</div>
+            <div class="sa-step-body">
+              <label class="option-label" data-i18n="order_notes">Notes for print</label>
+              <textarea id="custom-notes" rows="2" placeholder=""></textarea>
+            </div>
+          </div>
+
+          <div class="price-summary">
+            <div class="price-row">
+              <span data-i18n="unit_price">Unit price</span>
+              <span id="custom-unit-price">$0.00</span>
+            </div>
+            <div class="price-row total-row">
+              <span data-i18n="total">Total</span>
+              <span id="custom-config-total">$0.00</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%;margin-top:12px;padding:14px" id="custom-add-btn" onclick="addCustomToCart()" data-i18n="add_to_cart" disabled>
+            Add to cart
+          </button>
+          <p class="upload-note" data-i18n="upload_note">Instant online proof. We review every order before print.</p>
+        </aside>
+      </div>
+    </section>
+  </div>
+
+  <!-- ABOUT PAGE -->
+  <div id="page-about" style="display:none">
+    <section>
+      <h2 class="section-title" data-i18n="about_title">About StickerForge</h2>
+      <p class="section-sub" style="max-width:640px" data-i18n="about_text">
+        We are a modern sticker studio. We print premium vinyl stickers with free shipping and fast turnaround. Choose any emoji, customize size and shape, and get waterproof stickers that last.
+      </p>
+      <div class="features" style="margin-top:40px">
+        <div class="feature-card">
+          <div class="icon">🏭</div>
+          <h4 data-i18n="about_f1">Own production</h4>
+          <p data-i18n="about_f1d">Quality control from print to ship.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🌍</div>
+          <h4 data-i18n="about_f2">Global shipping</h4>
+          <p data-i18n="about_f2d">We ship to almost every country.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">❤️</div>
+          <h4 data-i18n="about_f3">Made with love</h4>
+          <p data-i18n="about_f3d">For creators, brands and sticker lovers.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo">🔥 <span>Sticker</span>Forge</div>
+        <p data-i18n="footer_tagline">Premium vinyl stickers. Waterproof, durable, and made to last.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram">📷</a>
+          <a href="#" aria-label="Twitter">🐦</a>
+          <a href="#" aria-label="TikTok">🎵</a>
+          <a href="#" aria-label="YouTube">▶️</a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer_shop">Shop</h4>
+        <a href="#" onclick="showPage('shop')" data-i18n="footer_all_stickers">All stickers</a>
+        <a href="#" onclick="showPage('shop')" data-i18n="footer_emoji">Emoji stickers</a>
+        <a href="#" data-i18n="footer_new">New arrivals</a>
+        <a href="#" data-i18n="footer_bestsellers">Bestsellers</a>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer_help">Help</h4>
+        <a href="#" data-i18n="footer_shipping">Shipping</a>
+        <a href="#" data-i18n="footer_returns">Returns</a>
+        <a href="#" data-i18n="footer_faq">FAQ</a>
+        <a href="#" data-i18n="footer_contact">Contact us</a>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer_company">Company</h4>
+        <a href="#" onclick="showPage('about')" data-i18n="footer_about">About us</a>
+        <a href="#" data-i18n="footer_careers">Careers</a>
+        <a href="#" data-i18n="footer_privacy">Privacy Policy</a>
+        <a href="#" data-i18n="footer_terms">Terms of Service</a>
+      </div>
+
+      <div class="footer-col footer-newsletter">
+        <h4 data-i18n="footer_newsletter">Newsletter</h4>
+        <p data-i18n="footer_newsletter_sub">Get new designs & discounts first</p>
+        <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+          <input type="email" id="newsletter-email" placeholder="you@email.com" required />
+          <button type="submit" class="btn btn-primary" data-i18n="footer_subscribe">Subscribe</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 StickerForge. <span data-i18n="footer_rights">All rights reserved.</span></p>
+      <div class="footer-payments" aria-label="Payment methods">
+        <!-- Apple Pay -->
+        <span class="pay-badge" title="Apple Pay">
+          <svg viewBox="0 0 62 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="62" height="32" rx="5" fill="#000"/>
+            <path fill="#fff" d="M16.55 9.15c-.55.65-1.45 1.15-2.35 1.08-.1-.9.35-1.85.8-2.45C15.45 7 16.55 6.5 17.4 6.45c.1.95-.3 1.9-.85 2.7zm1.15 1.4c-1.45-.05-2.7.85-3.35.85-.7 0-1.75-.8-2.9-.8-1.5 0-2.85.9-3.6 2.25-1.55 2.7-.4 6.7 1.1 8.9.75 1.05 1.65 2.25 2.8 2.2 1.1-.05 1.55-.75 2.85-.75s1.7.75 2.9.7c1.2-.05 1.95-1.1 2.7-2.15.85-1.25 1.2-2.45 1.2-2.5 0 0-2.3-.9-2.3-3.45 0-2.15 1.75-3.2 1.85-3.25-1.05-1.5-2.65-1.7-3.25-1.75z"/>
+            <text x="40" y="21" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="11" font-weight="500" fill="#fff">Pay</text>
+          </svg>
+        </span>
+        <!-- PayPal -->
+        <span class="pay-badge" title="PayPal">
+          <svg viewBox="0 0 72 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="72" height="32" rx="5" fill="#fff"/>
+            <rect x="0.5" y="0.5" width="71" height="31" rx="4.5" fill="none" stroke="#ddd"/>
+            <text x="36" y="21" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700">
+              <tspan fill="#003087">Pay</tspan><tspan fill="#009CDE">Pal</tspan>
+            </text>
+          </svg>
+        </span>
+        <!-- Visa -->
+        <span class="pay-badge" title="Visa">
+          <svg viewBox="0 0 56 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="56" height="32" rx="5" fill="#1A1F71"/>
+            <text x="28" y="21.5" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="800" font-style="italic" fill="#fff" letter-spacing="1">VISA</text>
+          </svg>
+        </span>
+        <!-- Mastercard - classic colored circles -->
+        <span class="pay-badge" title="Mastercard">
+          <svg viewBox="0 0 52 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="52" height="32" rx="5" fill="#000"/>
+            <circle cx="20" cy="16" r="9.5" fill="#EB001B"/>
+            <circle cx="32" cy="16" r="9.5" fill="#F79E1B"/>
+            <path d="M26 8.4a9.5 9.5 0 0 1 0 15.2 9.5 9.5 0 0 1 0-15.2z" fill="#FF5F00"/>
+          </svg>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- CART DRAWER -->
+  <div class="overlay" id="overlay" onclick="closeAll()"></div>
+  <div class="drawer" id="cart-drawer">
+    <div class="drawer-header">
+      <h2 data-i18n="cart">Your cart</h2>
+      <button onclick="closeCart()" style="font-size:1.4rem">×</button>
+    </div>
+    <div class="drawer-body" id="cart-items">
+      <div class="empty-cart">
+        <div class="icon">🛒</div>
+        <p data-i18n="cart_empty">Your cart is empty</p>
+      </div>
+    </div>
+    <div class="drawer-footer" id="cart-footer" style="display:none">
+      <div class="cart-total">
+        <span data-i18n="total">Total</span>
+        <span id="cart-total-price">$0</span>
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="checkout()" data-i18n="checkout">Checkout</button>
+    </div>
+  </div>
+
+  <!-- AUTH MODAL -->
+  <div class="modal" id="auth-modal">
+    <div class="modal-backdrop" onclick="closeAuth()"></div>
+    <div class="modal-content">
+      <h2 id="auth-title" data-i18n="login_title">Welcome back</h2>
+      <p class="sub" id="auth-sub" data-i18n="login_sub">Log in to your account</p>
+
+      <form id="auth-form" onsubmit="handleAuth(event)">
+        <div class="form-group" id="name-group" style="display:none">
+          <label data-i18n="name">Name</label>
+          <input type="text" id="auth-name" placeholder="Your name" />
+        </div>
+        <div class="form-group">
+          <label data-i18n="email">Email</label>
+          <input type="email" id="auth-email" required placeholder="you@email.com" />
+        </div>
+        <div class="form-group">
+          <label data-i18n="password">Password</label>
+          <input type="password" id="auth-password" required placeholder="••••••••" minlength="6" />
+        </div>
+        <div class="form-error" id="auth-error"></div>
+        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:8px" id="auth-submit" data-i18n="login_btn">Log in</button>
+      </form>
+
+      <div class="auth-toggle">
+        <span id="auth-toggle-text" data-i18n="no_account">Don't have an account?</span>
+        <button type="button" id="auth-toggle-btn" onclick="toggleAuthMode()" data-i18n="register">Register</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT CONFIGURATOR MODAL -->
+  <div class="modal" id="product-modal">
+    <div class="modal-backdrop" onclick="closeProductModal()"></div>
+    <div class="modal-content product-modal-content">
+      <button class="modal-close product-modal-close" onclick="closeProductModal()">×</button>
+
+      <div class="product-config">
+        <div class="product-preview">
+          <div class="preview-sticker" id="preview-sticker">😎</div>
+          <p class="preview-label" data-i18n="preview">Live preview</p>
+        </div>
+
+        <div class="product-options">
+          <h2 id="product-title">😎 Cool Face</h2>
+          <p class="product-from-price" id="product-from-price">From $2.49</p>
+
+          <div class="option-group">
+            <label class="option-label" data-i18n="size">Size</label>
+            <div class="option-pills" id="size-options"></div>
+          </div>
+
+          <div class="option-group">
+            <label class="option-label" data-i18n="shape">Shape</label>
+            <div class="option-pills" id="shape-options"></div>
+          </div>
+
+          <div class="option-group">
+            <label class="option-label" data-i18n="quantity">Quantity</label>
+            <div class="option-pills" id="qty-options"></div>
+            <div class="custom-qty">
+              <label data-i18n="or_custom">Or enter custom:</label>
+              <input type="number" id="custom-qty" min="1" max="1000" value="10" onchange="onCustomQty()" oninput="onCustomQty()" />
+            </div>
+          </div>
+
+          <div class="price-summary">
+            <div class="price-row">
+              <span data-i18n="unit_price">Unit price</span>
+              <span id="unit-price">$0.00</span>
+            </div>
+            <div class="price-row total-row">
+              <span data-i18n="total">Total</span>
+              <span id="config-total">$0.00</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="addConfiguredToCart()" data-i18n="add_to_cart">
+            Add to cart
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
