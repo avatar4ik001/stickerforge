@@ -533,7 +533,29 @@ function setLang(lang, save = true) {
   }
 }
 
+function toggleMobileNav() {
+  const nav = document.getElementById('main-nav');
+  const btn = document.getElementById('menu-toggle');
+  const overlay = document.getElementById('nav-overlay');
+  if (!nav) return;
+  const open = nav.classList.toggle('open');
+  if (btn) btn.classList.toggle('open', open);
+  if (overlay) overlay.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+
+function closeMobileNav() {
+  const nav = document.getElementById('main-nav');
+  const btn = document.getElementById('menu-toggle');
+  const overlay = document.getElementById('nav-overlay');
+  if (nav) nav.classList.remove('open');
+  if (btn) btn.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
 function showPage(page, options = {}) {
+  closeMobileNav();
   if (page === 'shop' && !options.keepCollection) {
     currentCollectionId = null;
   }

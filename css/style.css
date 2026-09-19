@@ -904,6 +904,47 @@ footer {
 
 .toast.show { transform: translateX(-50%) translateY(0); }
 
+/* ===== MOBILE MENU ===== */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 42px;
+  height: 42px;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.menu-toggle span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+.menu-toggle.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.menu-toggle.open span:nth-child(2) {
+  opacity: 0;
+}
+.menu-toggle.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 90;
+}
+.nav-overlay.open { display: block; }
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
   .footer-inner { grid-template-columns: 1fr 1fr; }
@@ -918,37 +959,175 @@ footer {
     height: 120px;
     font-size: 3.5rem;
   }
+  .product-config { grid-template-columns: 1fr; }
+  .product-preview {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    border-radius: 20px 20px 0 0;
+    padding: 28px 16px;
+  }
+  .preview-sticker {
+    font-size: 4.5rem;
+    min-width: 120px;
+    min-height: 120px;
+    padding: 16px;
+  }
 }
 
 @media (max-width: 768px) {
-  .hero {
-    grid-template-columns: 1fr;
-    padding-top: 40px;
-  }
-  nav { display: none; }
-  .header-inner { padding: 12px 16px; }
-  .hero-visual { min-height: 200px; padding: 24px; }
-  .emoji-preview { font-size: 2.2rem; }
-  .emoji-shop-grid {
-    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  body { overflow-x: hidden; }
+
+  .header-inner {
+    padding: 10px 14px;
     gap: 10px;
   }
-  .emoji-card { font-size: 2rem; }
+  .logo { font-size: 1.15rem; }
+  .menu-toggle { display: flex; }
+
+  nav#main-nav {
+    display: flex;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(280px, 82vw);
+    height: 100vh;
+    height: 100dvh;
+    background: var(--bg-card);
+    border-left: 1px solid var(--border);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 72px 20px 24px;
+    z-index: 95;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+    box-shadow: -8px 0 32px rgba(0,0,0,0.4);
+  }
+  nav#main-nav.open { transform: translateX(0); }
+  nav#main-nav a {
+    padding: 14px 12px;
+    font-size: 1.05rem;
+    border-radius: 10px;
+    color: var(--text);
+  }
+  nav#main-nav a.active {
+    background: var(--bg-hover);
+    color: var(--accent);
+  }
+
+  .header-actions { gap: 8px; }
+  .lang-switch button { padding: 5px 9px; font-size: 0.8rem; }
+  .btn-outline { padding: 8px 12px; font-size: 0.8rem; }
+  #auth-area .btn { white-space: nowrap; }
+  .cart-btn { padding: 8px 11px; }
+
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 36px 16px 28px;
+    gap: 24px;
+  }
+  .hero-text h1 { font-size: 2rem; line-height: 1.2; }
+  .hero-text p { font-size: 0.95rem; max-width: none; }
+  .hero-visual { min-height: 160px; padding: 16px; }
+  .emoji-preview { font-size: 2rem; }
+
+  section { padding-left: 16px; padding-right: 16px; }
+  .section-title { font-size: 1.5rem; }
+  .features {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .emoji-shop-grid {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 8px;
+  }
+  .emoji-card { font-size: 1.8rem; padding: 12px 6px; }
+
+  .stickers-catalog {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+  }
+  .sticker-card { padding: 14px 8px; }
+  .sticker-card .sticker-emoji { font-size: 2rem; }
+
+  .categories-grid,
+  #featured-stickers {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .category-card { padding: 20px 16px; }
+
+  .drawer {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .modal-content {
+    width: min(100%, 100vw - 24px);
+    margin: 12px;
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+  }
+  .product-modal-content {
+    width: min(100%, 100vw - 16px);
+    max-height: 94vh;
+    max-height: 94dvh;
+  }
+  .product-options { padding: 20px 16px; }
+  .product-options h2 { font-size: 1.25rem; }
+  .option-chips { flex-wrap: wrap; }
+  .config-price-box,
+  .product-price-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .config-price-box .btn,
+  .product-price-row .btn { width: 100%; }
+
   .footer-inner {
     grid-template-columns: 1fr;
     gap: 28px;
+    padding: 40px 16px 24px;
   }
   .footer-bottom {
     flex-direction: column;
-    gap: 10px;
+    gap: 14px;
     text-align: center;
+    padding: 16px;
   }
-  .config-options { padding: 24px 20px; }
-  .config-price-box {
-    flex-direction: column;
-    align-items: stretch;
+  .footer-payments {
+    justify-content: center;
+    flex-wrap: wrap;
   }
-  .config-price-box .btn { width: 100%; }
+  .footer-payments .pay-badge svg { height: 24px; width: auto; }
+
+  .sa-editor { grid-template-columns: 1fr; }
+  .sa-sidebar {
+    position: static;
+    max-height: none;
+    border-left: none;
+    border-top: 1px solid var(--border);
+  }
+  .sa-stage { min-height: 300px; padding: 20px 12px 10px; }
+  .sa-proof { width: min(220px, 72vw); }
+}
+
+@media (max-width: 480px) {
+  .logo { font-size: 1.05rem; }
+  .hero-text h1 { font-size: 1.7rem; }
+  .hero-actions { flex-direction: column; }
+  .hero-actions .btn { width: 100%; }
+  .stickers-catalog {
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  }
+  .preview-sticker {
+    font-size: 3.5rem;
+    min-width: 100px;
+    min-height: 100px;
+  }
 }
 
 /* ===== STICKERS CATALOG ===== */
@@ -1311,7 +1490,7 @@ footer {
 @media (max-width: 600px) {
   .categories-grid,
   #featured-stickers {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 12px;
   }
 
@@ -1324,11 +1503,11 @@ footer {
   }
 
   .category-card h3 {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
   }
 
   .category-preview {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
   }
 }
 
